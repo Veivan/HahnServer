@@ -8,10 +8,10 @@ namespace Hahn.ApplicatonProcess.July2021.Data
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
-        internal MainContext context;
+        internal AppContext context;
         internal DbSet<TEntity> dbSet;
 
-        public GenericRepository(MainContext context)
+        public GenericRepository(AppContext context)
         {
             this.context = context;
             this.dbSet = context.Set<TEntity>();

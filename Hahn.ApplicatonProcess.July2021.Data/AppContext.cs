@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace Hahn.ApplicatonProcess.July2021.Data
 {
-    public class MainContext : DbContext
+    public class AppContext : DbContext
     {
-        public MainContext(DbContextOptions<MainContext> options)
+        public AppContext(DbContextOptions<AppContext> options)
             : base(options)
         {
         }
 
-        public MainContext()
+        public AppContext()
         {
             Database.EnsureDeleted();
             Database.EnsureCreated();

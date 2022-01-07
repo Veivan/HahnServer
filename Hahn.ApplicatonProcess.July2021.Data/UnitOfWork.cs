@@ -4,62 +4,68 @@ using System;
 
 namespace Hahn.ApplicatonProcess.July2021.Data
 {
-    public class UnitOfWork : IDisposable, IUnitOfWork
+    public class UnitOfWork : IDisposable
     {
-        private MainContext context = new MainContext();
-        private GenericRepository<Asset> assetRepository;
-        private GenericRepository<User> userRepository;
+        private AppContext context = new AppContext();
+        private IRepository<User> userRepository;
 
-        public UnitOfWork() 
+        //        private GenericRepository<Asset> assetRepository;
+        //        private GenericRepository<User> userRepository;
+
+        public UnitOfWork()
         {
         }
 
-        public GenericRepository<Asset> AssetRepository
-    {
-        get
+/*        public GenericRepository<Asset> AssetRepository
         {
-            if (this.assetRepository == null)
+            get
             {
-                this.assetRepository = new GenericRepository<Asset>(context);
+                if (this.assetRepository == null)
+                {
+                    this.assetRepository = new GenericRepository<Asset>(context);
+                }
+                return assetRepository;
             }
-            return assetRepository;
-        }
-    }
+        } */
 
-    public GenericRepository<User> UserRepository
+        public IRepository<User> UserRepository
+        //public GenericRepository<User> UserRepository
         {
-        get
-        {
-            if (this.userRepository == null)
+            get
             {
-                this.userRepository = new GenericRepository<User>(context);
-            }
-            return userRepository;
-        }
-    }
-
-    public void Save()
-    {
-        context.SaveChanges();
-    }
-
-    private bool disposed = false;
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!this.disposed)
-        {
-            if (disposing)
-            {
-                context.Dispose();
+                if (this.userRepository == null)
+                {
+                    this.userRepository = new UserRepository(context);
+                    //this.userRepository = new GenericRepository<User>(context);
+                }
+                return userRepository;
             }
         }
-        this.disposed = true;
-    }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+
+        public void Save()
+        {
+            context.SaveChanges();
+        }
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
-}}
+}

@@ -1,5 +1,4 @@
 ﻿using Hahn.ApplicatonProcess.July2021.Data;
-using Hahn.ApplicatonProcess.July2021.Domain;
 using Hahn.ApplicatonProcess.July2021.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,33 +13,35 @@ namespace Hahn.ApplicatonProcess.July2021.Web.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        //private UnitOfWork unitOfWork = new UnitOfWork();
+        private UnitOfWork unitOfWork = new UnitOfWork();
 
-        private readonly IUnitOfWork unitOfWork;
+        /*        public UsersController(IUnitOfWork unitOfWork)//using DI from Startup.cs
+                {
+                    this.unitOfWork = unitOfWork;
+                }
+        */
 
-        public UsersController(IUnitOfWork unitOfWork)//using DI from Startup.cs
-        {
-            this.unitOfWork = unitOfWork;
-        }
-
-        // GET: Users
+        // GET: Users     
         [HttpGet]
-        public IEnumerable<User> Index()
+        //public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
-            var users = unitOfWork.UserRepository.Get(includeProperties: "Assets");
+            //return await _context.Users.ToListAsync();
+            var users = unitOfWork.UserRepository.GetItemsList();
             return users;
         }
 
         // GET api/users/5
         [HttpGet("{id}", Name = "Get")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(long? id)
         {
-            if (id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var user = unitOfWork.UserRepository.GetByID(id);
+            //var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+            var user = unitOfWork.UserRepository.GetItem((long)id);
             if (user == null)
             {
                 return NotFound();
@@ -79,17 +80,22 @@ namespace Hahn.ApplicatonProcess.July2021.Web.Controllers
                 return BadRequest();
             }
 
-            unitOfWork.UserRepository.Insert(user);
-            unitOfWork.Save();
+            //_context.Users.Add(user);
+            //await _context.SaveChangesAsync();
+
+            unitOfWork.UserRepository.Create(user);
+            await Task.Run(() => unitOfWork.Save());
 
             //return CreatedAtRoute(@"~api/users/{user.Id}", user);
             return CreatedAtRoute("Get", new { id = user.Id }, user);
             // return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
             // return Ok(user);
-
         }
 
         // PUT: Users/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[ValidateAntiForgeryToken]
         [HttpPut]
         public async Task<ActionResult<User>> Edit(User user)
         {
@@ -97,12 +103,16 @@ namespace Hahn.ApplicatonProcess.July2021.Web.Controllers
             {
                 return BadRequest();
             }
+            if (unitOfWork.UserRepository.GetItem(user.Id) == null)
+            {
+                return NotFound();
+            }
             try
             {
                 if (ModelState.IsValid)
                 {
                     unitOfWork.UserRepository.Update(user);
-                    unitOfWork.Save();
+                    await Task.Run(() => unitOfWork.Save());
                     return Ok(user);
                 }
             }
@@ -118,20 +128,24 @@ namespace Hahn.ApplicatonProcess.July2021.Web.Controllers
         [HttpDelete("{id}")]
         //[Route("Home/Delete")]
         //[Route("Home/Delete/{id?}")]
-        public async Task<ActionResult<User>> Delete(int id)
+        public async Task<ActionResult<User>> Delete(long? id)
         {
-            if (id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var user = unitOfWork.UserRepository.GetByID(id);
+            //var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+            var user = unitOfWork.UserRepository.GetItem((long)id);
             if (user == null)
             {
                 return NotFound();
             }
-            unitOfWork.UserRepository.Delete(id);
-            unitOfWork.Save();
+            unitOfWork.UserRepository.Delete((long)id);
+            await Task.Run(() => unitOfWork.Save());
+
+            //_context.Users.Remove(user);
+            //await _context.SaveChangesAsync();
             return Ok(user);
         }
         protected override void Dispose(bool disposing)
