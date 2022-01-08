@@ -37,9 +37,9 @@ namespace Hahn.ApplicatonProcess.July2021.Data
 
             var users = new List<User>
             {
-                new User {Age = 30, FirstName = "John", LastName = "Rambo", ZIP = "123678", 
+                new User {Id = 1, Age = 30, FirstName = "John", LastName = "Rambo", ZIP = "123678", 
                     Street = "Elm", HouseNum = "13"},
-                new User {Age = 35, FirstName = "Arny", LastName = "Shw", ZIP = "452783",
+                new User {Id = 2, Age = 35, FirstName = "Arny", LastName = "Shw", ZIP = "452783",
                     Street = "Main", HouseNum = "100"}
             };
 

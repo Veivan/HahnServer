@@ -124,6 +124,11 @@ namespace Hahn.ApplicatonProcess.July2021.Web.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Deletes a specific User.
+        /// </summary>
+        /// <param name="id"></param>  
+        
         // DELETE api/users/5
         [HttpDelete("{id}")]
         //[Route("Home/Delete")]

@@ -35,6 +35,7 @@ namespace Hahn.ApplicatonProcess.July2021.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddCors();
             services.AddControllers();
             services.AddDbContext<Data.AppContext>(opt => opt.UseInMemoryDatabase("HahnApp"));
             services.AddSwaggerGen();
@@ -60,19 +61,25 @@ namespace Hahn.ApplicatonProcess.July2021.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hahn.ApplicatonProcess.Web v1");
-                    c.RoutePrefix = string.Empty;
-                });
             }
+
+            app.UseCors(builder => builder
+                           .AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader());
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hahn.ApplicatonProcess.Web v1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-//            app.UseAuthorization();
+            //            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
