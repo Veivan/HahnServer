@@ -3,8 +3,6 @@ using Hahn.ApplicatonProcess.July2021.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Hahn.ApplicatonProcess.July2021.Data
 {
@@ -37,12 +35,17 @@ namespace Hahn.ApplicatonProcess.July2021.Data
 
         public void Update(User item)
         {
+
+            //var asset = context.Assets.FirstOrDefault(x => x.Id == "1");
+            //item.Assets.Add(asset);
+            
+
             var attachedEntity = context.Users.Local.FirstOrDefault(x => x.Id == item.Id);
             if (attachedEntity != null)
             {
                 var attachedEntry = context.Entry(attachedEntity);
                 attachedEntry.CurrentValues.SetValues(item);
-            }
+            } 
 
 
             /*          if (context.Entry(item).State == EntityState.Detached)
